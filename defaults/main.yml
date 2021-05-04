@@ -1,0 +1,5 @@
+---
+# defaults file for cache-node-server
+instdir: /usr/local/msgi
+yinstdir: /usr/local/yottadb
+instuser: root

@@ -1,0 +1,19 @@
+galaxy_info:
+  author: Raman Sailopal
+  description: Allows the installation of service gateway for connection of nodejs clients to Yottadb 
+
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: SLES
+      versions:
+      - all
+
+  galaxy_tags:
+    - database
+    - nodejs
+    - yottadb
+
+dependencies: []

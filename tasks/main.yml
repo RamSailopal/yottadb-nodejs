@@ -1,0 +1,48 @@
+---
+# tasks file for yottadb-mg
+- name: Make sure that git is installed
+  zypper:
+   name: "{{ item }}"
+   state: "present"
+  loop:
+    - git
+  when: ansible_distribution is search("SUSE")
+- name: Make sure that git is installed
+  yum:
+   name: "{{ item }}"
+   state: "present"
+  loop:
+    - git
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+- name: Make sure that git is installed
+  apt:
+   name: "{{ item }}"
+   state: "present"
+  loop:
+    - git
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+- name: copy install template
+  template:
+     src: "{{ item.src }}"
+     dest: "{{ item.dest }}"
+     owner: root
+     group: root
+     mode: "{{ item.mode }}"
+  loop:
+     - { src: "templates/install.sh", dest: "/tmp/install.sh", mode: "0744" }
+- name: clone the node service gateway git repo
+  git:
+    repo: https://github.com/chrisemunt/mgsi.git
+    dest: "{{ instdir }}"
+  tags:
+    - skip_ansible_lint # Need to get latest version so ignoring need for version parameter
+- name: Install the service gateway
+  command: "/tmp/install.sh {{ instuser }} {{ instdir }}"
+  register: outpt
+  changed_when: outpt.stdout is not search("")
+- name: Print whether the install has gone through or not
+  debug: msg="The service gateway for nodejs has installed successfully"
+  when: outpt.stdout is search("Service gateway process is running")
+- name: Print whether the install has gone through or not
+  debug: msg="The service gateway for nodejs has NOT been installed successfully"
+  when: outpt.stdout is not search("Service gateway process is running")
